@@ -1,57 +1,66 @@
 # Image-Captioning
+Generating a Caption for a given Image using Deep Learning
+### Table of Contents:
+1. Introduction
+2. Motivation
+3. Prerequisites
+4. Data collection
+5. Understanding the data
+6. Data Cleaning
+7. Loading the training set
+8. Data Preprocessing — Images
+9. Data Preprocessing — Captions
+10. Data Preparation using Generator Function
+11. Word Embeddings
+12. Model Architecture
+13. Model Training
+14. Making Predictions
+15. Conclusion
+16. References
 ### 1. Introduction
-Caption generation is a challenging artificial intelligence problem where a textual description must be generated for a given photograph. Image captioning, i.e., describing the content observed in an image, has received a significant amount of attention in recent years. It requires both methods from computer vision to understand the content of the image and a language model from the field of natural language processing to turn the understanding of the image into words in the right order. Recently, deep learning methods have achieved state-of-the-art results on examples of this problem. Image captioning has many potential applications in real life. A noteworthy one would be to save the captions of an image so that it can be retrieved easily at a later stage just on the basis of this description. It is applicable in various other scenarios, e.g., recommendation in editing applications, usage in virtual assistants, for image indexing, and support of the disabled. With the availability of large datasets, deep neural network (DNN) based methods have been shown to achieve impressive results on image captioning tasks. These techniques are largely based on recurrent neural nets (RNNs), often powered by a Long-Short-Term-Memory (LSTM) component. LSTM nets have been considered as the de-facto standard for vision-language tasks of image captioning [1], visual question answering [2], question generation [3], and visual dialog [4], due to their compelling ability to memorise long-term dependencies through a memory cell. In this project I have used CNNs and LSTMs to serve the purpose of the Image Captioning and achieve decent accuracy. Figure shown below can be used to understand the task of Image Captioning in a detailed manner.
+Caption generation is a challenging artificial intelligence problem where a textual description must be generated for a given photograph. Image captioning, i.e., describing the content observed in an image, has received a significant amount of attention in recent years. It requires both methods from computer vision to understand the content of the image and a language model from the field of natural language processing to turn the understanding of the image into words in the right order. Recently, deep learning methods have achieved state-of-the-art results on examples of this problem. Image captioning has many potential applications in real life. A noteworthy one would be to save the captions of an image so that it can be retrieved easily at a later stage just on the basis of this description. It is applicable in various other scenarios, e.g., recommendation in editing applications, usage in virtual assistants, for image indexing, and support of the disabled. With the availability of large datasets, deep neural network (DNN) based methods have been shown to achieve impressive results on image captioning tasks. These techniques are largely based on recurrent neural nets (RNNs), often powered by a Long-Short-Term-Memory (LSTM) component. LSTM nets have been considered as the de-facto standard for vision-language tasks of image captioning [1], visual question answering [2], question generation [3], and visual dialog [4], due to their compelling ability to memorise long-term dependencies through a memory cell. In this project I have used CNNs and LSTMs to serve the purpose of the Image Captioning and achieve decent accuracy. 
+Figure shown below can be used to understand the task of Image Captioning in a detailed manner.
 
-![image](https://user-images.githubusercontent.com/71714942/118142757-4ee11f00-b428-11eb-8749-6f5e42874450.png)
+![image](https://user-images.githubusercontent.com/71714942/118144720-66210c00-b42a-11eb-9ee9-29c7384c0d18.png)
 
 This figure would be labelled by different people as the following sentences :
-
-A man and a girl sit on the ground and eat .
-A man and a little girl are sitting on a sidewalk near a blue bag and eating .
-A man wearing a black shirt and a little girl wearing an orange dress share a treat .
+- A white dog in a grassy area.
+- A dog on grass and some pink flowers.
+- White dog with brown spots.
 But when it comes to machines, automatically generating this textual description from an artificial system is what is called Image Captioning. The task is straightforward – the generated output is expected to describe in a single sentence what is shown in the image – the objects present, their properties, the actions being performed and the interaction between the objects, etc. But to replicate this behaviour in an artificial system is a huge task, as with any other image processing problem and hence the use of complex and advanced techniques such as Deep Learning to solve the task.
-
-2. Motivation
-Generating captions for images is a vital task relevant to the area of both Computer Vision and Natural Language Processing. Mimicking the human ability of providing descriptions for images by a machine is itself a remarkable step along the line of Artificial Intelligence. The main challenge of this task is to capture how objects relate to each other in the image and to express them in a natural language (like English).Traditionally, computer systems have been using pre-defined templates for generating text descriptions for images. However, this approach does not provide sufficient variety required for generating lexically rich text descriptions. This shortcoming has been suppressed with the increased efficiency of neural networks. Many state of art models use neural networks for generating captions by taking image as input and predicting next lexical unit in the output sentence. Some real world scenarios where Image Captioning plays a vital role are as follows :
-
-Self driving cars — Automatic driving is one of the biggest challenges and if we can properly caption the scene around the car, it can give a boost to the self driving system.
-Aid to the blind — We can create a product for the blind which will guide them travelling on the roads without the support of anyone else. We can do this by first converting the scene into text and then the text to voice. Both are now famous applications of Deep Learning.
-CCTV cameras are everywhere today, but along with viewing the world, if we can also generate relevant captions, then we can raise alarms as soon as there is some malicious activity going on somewhere. This could probably help reduce some crime and/or accidents.
-Automatic Captioning can help, make Google Image Search as good as Google Search, as then every image could be first converted into a caption and then search can be performed based on the caption.
-3. Objective
-This project aims at generating captions for images using neural language models. There has been a substantial increase in number of proposed models for image captioning task since neural language models and convolutional neural networks(CNN) became popular. This project has its base on one of such works, which uses a variant of Recurrent neural network coupled with a CNN. I intend to enhance this model by making subtle changes to the architecture and using phrases as elementary units instead of words, which may lead to better semantic and syntactical captions. RNN’s have become very powerful. Especially for sequential data modelling. Image captioning is an application of one to many type of RNNs. For a given input image model predicts the caption based on the vocabulary of train data. I have considered the Flickr8k dataset for this project.
-
-4. Summary
-Image captioning is an important task, applicable to virtual assistants, editing tools, image indexing, and support of the disabled. In recent years significant progress has been made in image captioning, using Recurrent Neural Networks powered by long-short-term-memory (LSTM) units. Despite mitigating the vanishing gradient problem, and despite their compelling ability to memorize dependencies, LSTM units are complex and inherently sequential across time. To address this issue, recent work has shown benefits of convolutional networks for machine translation and conditional image generation. The task of image captioning can be divided into two modules logically – one is an image based model – which extracts the features and nuances out of our image, and the other is a language based model – which translates the features and objects given by our image based model to a natural sentence. Chapter 2 explains the detailed methodology of this project including Data Collection, Data Cleaning, Loading the training set, Data Preprocessing — Images, Data Preprocessing — Captions, Word Embeddings and the Model Architecture. Chapter 3 discusses about the results obtained and the inferences drawn from them. This chapter lists down the prediction made by the model on test data i.e. the captions generated given the test image. The chapter also lists down instances when the model is not able to generate relevant captions from the image. Chapter 4 concludes the project and discusses the drawbacks and future scope of the same. We must understand that the images used for testing must be semantically related to those used for training the model. For example, if the model is trained on images of cats, dogs, etc. then it should not be tested or used to generate captions for images of air planes, waterfalls, etc. This is an example where the distribution of the train and test sets will be very different and in such cases no Machine Learning model would give good performance.
-
-Chapter II
-1. Data Collection
-There are many open source datasets available for this problem, like Flickr 8k [5] (containing8k images), Flickr 30k [6] (containing 30k images), MS COCO [7] (containing 180k images), etc. But a good dataset to use when getting started with image captioning is the Flickr8K dataset. The reason is because it is realistic and relatively small so that we can download it and build models on our workstation using a CPU. Flickr8k is a labeled dataset consisting of 8000 photos with 5 captions for each photos. It includes images obtained from the Flickr website. Another advantage of using Flickr8k is that data is properly labelled. For each image 5 captions have been provided. The images were chosen from six different Flickr groups, and tend not to contain any well-known people or locations, but were manually selected to depict a variety of scenes and situations.
+### 2. Motivation
+Generating captions for images is a vital task relevant to the area of both Computer Vision and Natural Language Processing. Mimicking the human ability of providing descriptions for images by a machine is itself a remarkable step along the line of Artificial Intelligence. The main challenge of this task is to capture how objects relate to each other in the image and to express them in a natural language (like English). Some real world scenarios where Image Captioning plays a vital role are as follows :
+- Self driving cars — Automatic driving is one of the biggest challenges and if we can properly caption the scene around the car, it can give a boost to the self driving system.
+- Aid to the blind — We can create a product for the blind which will guide them travelling on the roads without the support of anyone else. We can do this by first converting the scene into text and then the text to voice. Both are now famous applications of Deep Learning.
+- CCTV cameras are everywhere today, but along with viewing the world, if we can also generate relevant captions, then we can raise alarms as soon as there is some malicious activity going on somewhere. This could probably help reduce some crime and/or accidents.
+- Automatic Captioning can help, make Google Image Search as good as Google Search, as then every image could be first converted into a caption and then search can be performed based on the caption.
+### 3. Prerequisites
+This project aims at generating captions for images using neural language models. There has been a substantial increase in number of proposed models for image captioning task since neural language models and convolutional neural networks(CNN) became popular. This project has its base on one of such works, which uses a variant of Recurrent neural network coupled with a CNN. I intend to enhance this model by making subtle changes to the architecture and using phrases as elementary units instead of words, which may lead to better semantic and syntactical captions. RNN’s have become very powerful. Especially for sequential data modelling. Image captioning is an application of one to many type of RNNs. For a given input image model predicts the caption based on the vocabulary of train data using basic Deep Learning concepts like Multi-layered Perceptrons, Convolution Neural Networks, Recurrent Neural Networks, Transfer Learning, Gradient Descent, Backpropagation, Overfitting, Probability, Text Processing, Python syntax and data structures, Keras library, etc. 
+I have considered the Flickr8k dataset - https://www.kaggle.com/shadabhussain/flickr8k for this project.
+### 4. Data Collection
+There are many open source datasets available for this problem, like Flickr 8k [5] (containing8k images), Flickr 30k [6] (containing 30k images), MS COCO [7] (containing 180k images), etc. But a good dataset to use when getting started with image captioning is the Flickr8K dataset. The reason is because it is realistic and relatively small so that we can download it and build models on our workstation using a CPU(preferably GPU). Flickr8k is a labeled dataset consisting of 8000 photos with 5 captions for each photos. It includes images obtained from the Flickr website.
 The images in this dataset are bifurcated as follows:
+- Training Set — 6000 images
+- Validation Set — 1000 images
+- Test Set — 1000 images
+### 5. Understanding the Data
+The Flickr8k dataset also consists of some text files included as part of the dataset. One of the files is the “Flickr8k.token.txt” which contains the name of each image along with the 5 captions. 
+![image](https://user-images.githubusercontent.com/71714942/118147232-00824f00-b42d-11eb-95b7-8205dbd52190.png)
 
-Training Set — 6000 images
-Validation Set — 1000 images
-Test Set — 1000 images
-2.Understanding the Data
-The Flickr8k dataset also consists of some text files included as part of the dataset. One of the files is the “Flickr8k.token.txt” which contains the name of each image along with the 5 captions. Thus every line contains the #i , (where 0≤i≤4 ) i.e. the name of the image, caption number (0 to 4) and the actual caption. Table 1 shows the format in which data is given in this text file.
+Thus every line contains the <image name>#i <caption>, where 0≤i≤4 , i.e. the name of the image, caption number (0 to 4) and the actual caption.
 
-
-
-3. Data Cleaning
+### 6. Data Cleaning
 When we deal with text, we generally perform some basic cleaning like lower-casing all the words (otherwise“hello” and “Hello” will be regarded as two separate words), removing special tokens (like ‘%’, ‘$’, ‘#’, etc.), eliminating words which contain numbers (like ‘hey199’, etc.). In this project, while text cleaning :
 
-Stop words have not been removed because if we don’t teach our model how to insert stop words like a, an, the, etc , it would not generate correct english.
-Stemming has not been performed because if we feed in stemmed words, the model is also going to learn those stemmed words . So for example, if the word is ‘running’ and we stem it and make it ‘run’ , the model will predict sentences like “Dog is run” instead of “Dog is running”.
-All the text has been converted to lower case so that ‘the’ and ‘The’ are treated as the same words.
-Numbers, Punctuations and special symbols like ‘@‘, ‘#’ and so on have been removed, so that we generate sentences without any punctuation or symbols. This is beneficial as it helps to reduce the vocabulary size. Small vocabulary size means less number of neurons and hence less parameters to be computed and hence less overfitting.
-3.1 Vocabulary Creation
-Next step is to create a vocabulary of all the unique words present across all the 8000*5 (i.e. 40000) image captions in the dataset. To make the vocabulary set, a python inbuilt data structure called SET has been used. Set is used to store all the unique words in the dataset. Total unique words that are there in the dataset are 8424. However, many of these words will occur very few times , say 1, 2 or 3 times. Since it is a predictive model, we would not like to have all the words present in our vocabulary but the words which are more likely to occur or which are common. This helps the model become more robust to outliers and make less mistakes. Hence a threshold has been chosen and if the frequency of the word is less than the threshold frequency, then that particular word has been removed from our vocabulary set. Finally for storing the words and their corresponding frequencies, another python data structure called Counter has been used.
-
-Note : A counter is a subclass of dict. Therefore it is an unordered collection where elements and their respective count are stored as a dictionary. It is imported from the collections module.
-
+- Stop words have not been removed because if we don’t teach our model how to insert stop words like a, an, the, etc , it would not generate correct english.
+- Stemming has not been performed because if we feed in stemmed words, the model is also going to learn those stemmed words . So for example, if the word is ‘running’ and we stem it and make it ‘run’ , the model will predict sentences like “Dog is run” instead of “Dog is running”.
+- All the text has been converted to lower case so that ‘the’ and ‘The’ are treated as the same words.
+- Numbers, Punctuations and special symbols like ‘@‘, ‘#’ and so on have been removed, so that we generate sentences without any punctuation or symbols. This is beneficial as it helps to reduce the vocabulary size. Small vocabulary size means less number of neurons and hence less parameters to be computed and hence less overfitting.
+#### 3.1 Vocabulary Creation
+Next step is to create a vocabulary set of all the unique words present across all the 8000*5 (i.e. 40000) image captions in the dataset. Total unique words that are there in the dataset are 8424. However, many of these words will occur very few times , say 1, 2 or 3 times. Since it is a predictive model, we would not like to have all the words present in our vocabulary but the words which are more likely to occur or which are common. This helps the model become more robust to outliers and make less mistakes. Hence a threshold has been chosen and if the frequency of the word is less than the threshold frequency, then that particular word has been removed from our vocabulary set. Finally we store the words and their corresponding frequency in a sorted dictionary.
 After applying the frequency threshold filter, we get the total vocabulary size as 1652 words (having frequency more than 10).
 
-3.2 Loading the Training Set
+#### 3.2 Loading the Training Set
 The dataset also includes “Flickr_8k.trainImages.txt” file which contains the name of the images (or image ids) that belong to the training set. So all the training image ids have been mapped with the captions and stored in a dictionary. Another important step while creating the dictionary was to add a ‘startseq’ and ‘endseq’ token in every caption, since RNN or LSTM based layers have been used for generating text. In such layers, the generation of text takes place such that the output of a previous unit acts as an input to the next unit. So such model can keep generating words for infinite time steps. Hence we need to specify a way which tells the model to stop generating words further. This is accomplished by adding two tokens in the captions i.e.
 
 ‘startseq’ -> This is a start sequence token which was added at the start of every caption.
