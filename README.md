@@ -1,5 +1,5 @@
 # Image-Captioning
-Generating a Caption for a given Image using Deep Learning
+
 ### Table of Contents:
 1. Introduction
 2. Motivation
