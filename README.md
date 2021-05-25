@@ -7,8 +7,8 @@
 4. Data collection
 5. Understanding the data
 6. Text Cleaning
-7. Loading the training set
-8. Image Preprocessing 
+7. Preparing the training and test set
+8. Image Preprocessing - Image Features Extraction using Transfer Learning (ResNet-50 Model)
 9. Preprocessing Captions
 10. Image Captioning as Supervised learning problem and data preparation using Generator Function
 11. Word Embeddings - Transfer Learning
@@ -119,6 +119,10 @@ In this project, transfer learning has been used to extract features from images
 ![image](https://github.com/gautamgc17/Image-Captioning/blob/fd1822c3456dbb0ce20abe699d35515461c2e525/images/ResNet%20Architecture.png)
 
 The whole ResNet model has not been trained from scratch. We are not interested in classifying images, but we are interested in the internal representation of the photo right before a classification is made. These are the “features” that the model has extracted from the photo. The Convolutional base is used as a feature extractor. After the convolutional base, a Global average pooling layer has been used to reduce the size of the activation map. Global Average Pooling takes a single channel at a time and averages all the values in that channel to convert it into a single value. The convolutional base produces an activation map of (7,7,2048). The Global Average Pooling layer takes the average of 7*7 (=49) pixels across all the 2048 channels and reduces the size of the activation map to (1,1,2048). So given an image, the model converts it into 2048 dimensional vector. Hence, we just remove the last softmax layer from the model and extract a 2048 length vector (bottleneck features) for every image. These feature vectors are generated for all the images of the training set and later will be sent to the final image captioning model to make predictions. We save all the train image features in a Python dictionary and save it on the disk using Pickle file, namely “encoded_train_img_features.pkl” whose keys are image names and values are corresponding 2048 length feature vector. Similarly we encode all the test images and save their 2048 length vectors on the disk to be used later while making predictions.
+
+*Note that*
+- The preprocess_input function converts images from RGB to BGR and then each color channel is zero-centered with respect to the ImageNet dataset, without scaling. Since we are using Transfer Learning, this is necessary so as to normalize our image data according to how it was trained in original ResNet-50 Model.
+- “Pickling” is the process whereby a Python object hierarchy is converted into a byte stream, and “unpickling” is the inverse operation, whereby a byte stream (from a binary file or bytes-like object) is converted back into an object hierarchy.
   
 ![image](https://github.com/gautamgc17/Image-Captioning/blob/3666315546042d235a8c316ad078993065e57d4f/images/image_preprocessing.PNG)
   
@@ -131,7 +135,7 @@ But the entire caption, given the image cannot be predicted all at once. Caption
   
 - idx_to_word[10] -> returns the word whose index is 10
   
-!image
+![image](https://github.com/gautamgc17/Image-Captioning/blob/cf192a19b591de88672ae5fdbab525b5ba48fa84/images/captions.PNG)
   
 When the model is given a batch of sentences as input, the sentences maybe of different lengths. Hence to complete the 2D matrix or batch of sentences, zeros have been filled in for shorter sentences to make them equal in length to the longer sentences. The length of all the sentences have been fixed i.e equal to the length of the longest sentence in our vocabulary.
   
@@ -173,7 +177,7 @@ Finally the size of the data matrix = 210000 * 3698 = 776, 580, 000. Now even if
 
 A generator function in Python is used exactly for this purpose. It’s like an iterator which resumes the functionality from the point it left the last time it was called.
   
-!image
+![image](https://github.com/gautamgc17/Image-Captioning/blob/72024e572307b2d4b865cf875c9efb089c27dce8/images/generator.PNG)
   
 ### 11. Word Embeddings -Transfer Learning
   
@@ -181,7 +185,7 @@ Word embedding is a technique used for the representation of words for text anal
   
 This section describes how indices of words of a caption have been converted into embeddings of fixed length. Whenever we feed data into RNN or LSTM layer, this data should have also been passed through the embedding layer. This embedding layer can be trained or we can pre - initialise this layer. In this project we have pre - initialised this layer by using Glove vectors from the file Glove6B50D.txt [download Glove Vectors file from here](https://nlp.stanford.edu/projects/glove/). This txt file contains 50 dimensional word embeddings for 6 billion words. All 6 billion words are not needed and we just need the embeddings for the words that are there in our vocabulary.
   
-!image
+![image](https://github.com/gautamgc17/Image-Captioning/blob/1064b0f7b01ce5e2aabeedd45f43293e9f3d2ad7/images/embeddings.PNG)
 
 *Note : Words that are present in our vocab but are not there in the glove embeddings file will be substituted by all zeros(50-dimensional).*
   
@@ -194,11 +198,30 @@ Image feature vector along with the partial sequence(caption) will be given to t
 Since the input consists of two parts, an image vector and a partial caption, we cannot use the Sequential API provided by the Keras library. For this reason, we use the Functional API which allows us to create Merge Models.
   
 *Note : Since we have used a pre-trained embedding layer, we had to freeze it (trainable = False), before training the model, so that it does not get updated during the backpropagation.*
+ 
+We will describe the model in three parts:
 
-Image vector is nothing but the output of ResNet model we had used for encoding. We then add a Dense layer of 256 neurons to squeeze the output of ResNet from 2048 to 256. The LSTMs also give the hidden vector of size 256. Now both the outputs are concatenated and sent to a MLP i.e. Multilayer Perceptron. The MLP is just a decoder that predicts what should be the next word. The output layer has neurons equal to the vocabulary size. The Decoder model thus merges the fixed-size vectors from both input models using an addition operation. This is then fed to a Dense 256 neuron layer and then to a final output Dense layer that makes a probability prediction over the entire output vocabulary, using
-  softmax activation function, for the next word in the sequence.
+**Photo Feature Extractor** -  This is a ResNet-50 model pre-trained on the ImageNet dataset. We have pre-processed the photos with this model (without the output layer) and will use the extracted features predicted by this model as input.
+ 
+**Sequence Processor** - This is a word embedding layer for handling the text input, followed by a Long Short-Term Memory (LSTM) recurrent neural network layer.
+ 
+**Decoder** - Both the feature extractor and sequence processor output a fixed-length vector. These are merged together and processed by a Dense layer to make a final prediction.
+ 
+The Photo Feature Extractor model expects input photo features to be a vector of 2,048 elements. These are processed by a Dense layer to produce a 256 element representation of the photo.
+
+The Sequence Processor model expects input sequences with a pre-defined length (33 words) which are fed into an Embedding layer that uses a mask to ignore padded values. This is followed by an LSTM layer with 256 memory units.
+
+Both the input models produce a 256 element vector. Now both the outputs are concatenated and sent to a MLP i.e. Multilayer Perceptron. Further, both input models use regularization in the form of 30% dropout. This is to reduce overfitting the training dataset, as this model configuration learns very fast.
+
+The Decoder model merges the vectors from both input models using an addition operation. This is then fed to a Dense 256 neuron layer and then to a final output Dense layer which has nodes equal to the vocabulary size and thus, makes a probability prediction over the entire output vocabulary, using softmax activation function, for the next word in the sequence.
+
+![image](https://github.com/gautamgc17/Image-Captioning/blob/9282411376a1edaa0bca6c1cf8a9f9a03833d2fc/images/softmax.jpeg)
 
 Since there are multiple outputs possible from the output layer, we have used categorical cross entropy as the loss function. The optimizer used to optimize the loss is the Adam optimizer.
+ 
+![image](https://github.com/gautamgc17/Image-Captioning/blob/bd9ffe14d9f13cbdcc0b363afc8f098cef60a880/images/network.PNG)
+ 
+Finally the weights of the model will be updated through backpropagation algorithm and the model will learn to output a word, given an image feature vector and a partial caption.
   
 
   
