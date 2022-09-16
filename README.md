@@ -1,4 +1,4 @@
-# Automatic Image Captioning
+# AI Image Caption Generator 
 
 ### Project Workflow:
 1. Introduction
