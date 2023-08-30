@@ -1,0 +1,6 @@
+pillow
+pickleshare
+numpy
+tensorflow-cpu
+streamlit
+urllib3
