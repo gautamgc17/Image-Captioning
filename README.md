@@ -1,5 +1,11 @@
 # AI-Powered Image Caption Generator 
 
+This image captioning project makes use of a ResNet-50 feature extractor, and an LSTM sequence processor to generate captions from images. It processes input images and text data to produce accurate and meaningful descriptions.
+
+#### _Reference - [Yumi's Blog](https://fairyonice.github.io/Develop_an_image_captioning_deep_learning_model_using_Flickr_8K_data.html)_
+
+<br>
+
 ### Project Workflow:
 1. Introduction
 2. Applications
